@@ -44,6 +44,7 @@ function update_node() {
     echo -e "${RED}$COIN_NAME${NC} is already installed and running the lastest version."
     exit 0
   else
+    clear
     echo -e "${RED}No $COIN_NAME${NC} installation detected. Continue with the normal installation"
   fi
 }
