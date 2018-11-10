@@ -51,7 +51,7 @@ function update_node() {
 function download_node() {
   echo -e "Prepare to download ${GREEN}$COIN_NAME${NC}."
   cd $TMP_FOLDER >/dev/null 2>&1
-  wget -q $COIN_TGZ
+  wget -q $COIN_DEB
   compile_error
   dpkg -i $COIN_ZIP
   cd - >/dev/null 2>&1
