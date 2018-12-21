@@ -2,16 +2,17 @@
 
 TMP_FOLDER=$(mktemp -d)
 CONFIG_FILE='domo.conf'
-CONFIGFOLDER='/root/.domo'
+CONFIGFOLDER='/root/.domocoin'
 COIN_DAEMON='domod'
 COIN_CLI='domo-cli'
 COIN_PATH='/usr/local/bin/'
-COIN_DEB='https://github.com/Utopianer/DomoCore/releases/download/DomoCore_1.0.0.1/domo-setup_1.0.0.1.deb'
+COIN_DEB='https://github.com/Utopianer/DomoCore/releases/download/DomoCore-v3.0.0.1/Domo-setup_3.0.0.1.deb'
+OLD_DEB='domo-setup'
 COIN_ZIP=$(echo $COIN_DEB | awk -F'/' '{print $NF}')
-COIN_BLOCKS='https://github.com/zoldur/Domo/releases/download/v1.0.0.1/blocks.tgz'
 COIN_NAME='Domo'
-COIN_PORT=41992
-RPC_PORT=41993
+VERSION=3000001
+COIN_PORT=52992
+RPC_PORT=52993
 
 NODEIP=$(curl -s4 api.ipify.org)
 
@@ -20,15 +21,6 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
-function sync_node() {
-  echo -e "Syncing the node. This might take a while, depending on your internet connection!"
-  cd $CONFIGFOLDER >/dev/null 2>&1
-  rm -r ./{blocks,chainstate,sporks,peers.dat,blocks.tgz} >/dev/null 2>&1
-  wget -q $COIN_BLOCKS
-  tar xvzf blocks.tgz >/dev/null 2>&1
-  rm blocks.tgz >/dev/null 2>&1
-  cd - >/dev/null 2>&1
-}
 
 function update_node() {
   echo -e "Checking if ${RED}$COIN_NAME${NC} is already installed and running the lastest version."
@@ -37,9 +29,8 @@ function update_node() {
   systemctl start $COIN_NAME.service >/dev/null 2>&1
   sleep 10
   apt -y install jq >/dev/null 2>&1
-  PROTOCOL_VERSION=$($COIN_PATH$COIN_CLI getinfo 2>/dev/null| jq .protocolversion)
-  echo $
-  if [[ "$PROTOCOL_VERSION" -eq 70914 ]]
+  DOMO_VERSION=$($COIN_PATH$COIN_CLI getinfo 2>/dev/null| jq .version)
+  if [[ "$DOMO_VERSION" -eq "$VERSION" ]]
   then
     echo -e "${RED}$COIN_NAME${NC} is already installed and running the lastest version."
     exit 0
@@ -54,6 +45,8 @@ function download_node() {
   cd $TMP_FOLDER >/dev/null 2>&1
   wget -q $COIN_DEB
   compile_error
+  systemctl stop $COIN_NAME.service >dev/null 2>&1
+  dpkg -P $OLD_DEB >/dev/null 2>&1
   dpkg -i $COIN_ZIP
   cd - >/dev/null 2>&1
   rm -rf $TMP_FOLDER >/dev/null 2>&1
@@ -264,7 +257,7 @@ function important_information() {
 function setup_node() {
   get_ip
   #create_config
-  sync_node
+  #sync_node
   create_key
   update_config
   enable_firewall
