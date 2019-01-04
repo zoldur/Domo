@@ -18,14 +18,15 @@ After the MN is up and running, you need to configure the desktop wallet accordi
 4. Wait for 15 confirmations.
 5. Go to **Help -> "Debug Window - Console"**
 6. Type the following command: **masternode outputs**
-7. Go to  **Tools -> "Open Masternode Configuration File"**
-8. Add the following entry:
+7. Type the following command: **masternode genkey**
+8. Go to  **Tools -> "Open Masternode Configuration File"**
+9. Add the following entry:
 ```
 Alias Address Privkey TxHash TxIndex
 ```
 * Alias: **MN1**
 * Address: **VPS_IP:PORT**
-* Privkey: **Masternode Private Key**
+* Privkey: **Masternode Private Key from Step 7**
 * TxHash: **First value from Step 6**
 * TxIndex:  **Second value from Step 6**
 9. Save and close the file.
